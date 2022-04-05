@@ -1,4 +1,7 @@
-export default function Schedule() {
+import moment from "moment";
+import { ScheduleProps, ScheduleType } from "../../shared/types";
+
+export default function Schedule({schedule}: ScheduleProps) {
     return (
         <table className="table-fixed">
         <thead>
@@ -9,21 +12,15 @@ export default function Schedule() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="border px-4 py-2">Monday</td>
-            <td className="border px-4 py-2">09:00 am</td>
-            <td className="border px-4 py-2">11:00 pm</td>
-          </tr>
-          <tr className="bg-gray-100">
-            <td className="border px-4 py-2">Tuesday</td>
-            <td className="border px-4 py-2">09:00 am</td>
-            <td className="border px-4 py-2">11:00 pm</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2">Wednesday</td>
-            <td className="border px-4 py-2">09:00 am</td>
-            <td className="border px-4 py-2">11:00 pm</td>
-          </tr>
+          {
+            schedule.map((_schedule: ScheduleType, index: number) => (
+              <tr key={index}>
+                <td className="border px-4 py-2">{moment().day(_schedule.day).format('dddd')}</td>
+                <td className="border px-4 py-2">{moment(_schedule.start, "HH:mm:ss").format("h:mm:ss A")}</td>
+                <td className="border px-4 py-2">{moment(_schedule.end, "HH:mm:ss").format("h:mm:ss A")}</td>
+              </tr>
+            ))
+          }
         </tbody>
       </table>     
     );
