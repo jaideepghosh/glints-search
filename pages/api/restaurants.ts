@@ -4,7 +4,7 @@ const supabase = require('../../shared/db_client');
 const APP_CONSTANTS = require('../../shared/constants');
 
 type Data = {
-  name: string
+  message: string
 }
 
 export default async function handler(
@@ -43,6 +43,6 @@ export default async function handler(
             return res.status(500).json(response_error);
         return res.status(200).json(result);
     } catch (error) {
-        return res.status(500).json({ name: 'Something went wrong.' })
+        return res.status(500).json({ message: 'Something went wrong.' })
     }
 }
