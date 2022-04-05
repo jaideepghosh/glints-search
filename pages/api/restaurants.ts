@@ -21,10 +21,19 @@ export default async function handler(
 
         let result;
         let response_error;
+        const select_values = `
+            id,
+            name,
+            schedule: restaurants_schedule (
+                day,
+                start,
+                end
+            )
+        `;
         if(search_key){
             const { data, error } = await supabase
                 .from(APP_CONSTANTS.restaurants)
-                .select()
+                .select(select_values)
                 .textSearch('name', search_key)
                 .range(start_limit,end_limit);
             if(error)
@@ -33,7 +42,7 @@ export default async function handler(
         } else {
             const { data, error } = await supabase
                 .from(APP_CONSTANTS.restaurants)
-                .select()
+                .select(select_values)
                 .range(start_limit,end_limit);
             if(error)
                 response_error = error;
