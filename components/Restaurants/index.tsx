@@ -1,5 +1,6 @@
 import { RestaurantResponseType } from "../../shared/types";
 import Accordion from "../Accordion";
+import AccordionLoader from "../AccordionLoader";
 import Schedule from "./Schedule";
 import SearchForm from "./SearchForm";
 
@@ -11,13 +12,16 @@ export default function Restaurants() {
             <SearchForm/>
 
             <div className="bg-white rounded-lg shadow">
-            {
-              restaurants.map((restaurant)=>(
-                <Accordion title={restaurant.name} key={restaurant.id}>
-                  <Schedule schedule={restaurant.schedule}/>
-              </Accordion>
-              ))
-            }
+              {
+                !restaurants.length? <AccordionLoader/>: <></>
+              }
+              {
+                restaurants.length && restaurants.map((restaurant)=>(
+                  <Accordion title={restaurant.name} key={restaurant.id}>
+                    <Schedule schedule={restaurant.schedule}/>
+                </Accordion>
+                ))
+              }
             </div>
         </div>
       </div>      
