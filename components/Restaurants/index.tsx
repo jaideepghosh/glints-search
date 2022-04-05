@@ -1,3 +1,5 @@
+import Accordion from "../Accordion";
+import Schedule from "./Schedule";
 import SearchForm from "./SearchForm";
 
 export default function Restaurants() {
@@ -7,12 +9,15 @@ export default function Restaurants() {
             <SearchForm/>
 
             <div className="bg-white rounded-lg shadow">
-                <ul className="divide-y-2 divide-gray-100">
-                    <li className="p-3">List Item 1</li>
-                    <li className="p-3">List Item 2</li>
-                    <li className="p-3">List Item 3</li>
-                    <li className="p-3">List Item 4</li>
-                </ul>
+              <Accordion title={'Kushi Tsuru'}>
+                <Schedule/>
+              </Accordion>
+              <Accordion title={'Osakaya Restaurant'} >
+                <Schedule/>
+              </Accordion>
+              <Accordion title={'The Stinking Rose'} >
+                <Schedule/>
+              </Accordion>
             </div>
         </div>
       </div>      
