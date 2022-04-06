@@ -4,7 +4,8 @@ export type ScheduleType = {
     end: string
 }
 export type ScheduleProps = {
-    schedule: Array<ScheduleType>
+    schedule: Array<ScheduleType>,
+    key: number
 }
 export type RestaurantResponseType = {
     id: number,
