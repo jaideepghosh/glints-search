@@ -12,6 +12,7 @@ export default function Restaurants() {
   const limit = 10;
 
   const loadNextpage = () => {
+    setLoader(true);
     const newPage = page+1;
     fetchRestaurants((newPage*limit)-limit+1,newPage*limit);
     setPage(newPage);
@@ -22,7 +23,6 @@ export default function Restaurants() {
   }, []);
 
   const fetchRestaurants = (start = 0, end = limit) => {
-    setLoader(true);
     fetch(`api/restaurants?start=${start}&end=${end}`).then((response) => response.json())
     .then(__restaurants=>{
       setRestaurants(_restaurants => [..._restaurants, ...__restaurants])
