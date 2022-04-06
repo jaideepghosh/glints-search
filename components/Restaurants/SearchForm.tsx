@@ -12,7 +12,7 @@ export default function SearchForm() {
     const hours = generateHours();
     const HourOptions = () => {
             return hours.map((hour:string, index: number)=>(
-                <option value={hour} key={index}>{hour}</option>
+                <option value={moment(hour, "h:mm:ss A").format("HH:mm:ss")} key={index}>{hour}</option>
             ))
     };
 
