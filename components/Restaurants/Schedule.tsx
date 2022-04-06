@@ -1,7 +1,7 @@
 import moment from "moment";
 import { ScheduleProps, ScheduleType } from "../../shared/types";
 
-export default function Schedule({schedule, key}: ScheduleProps) {
+export default function Schedule({schedule, id}: ScheduleProps) {
     return (
         <table className="table-fixed">
         <thead>
@@ -14,7 +14,7 @@ export default function Schedule({schedule, key}: ScheduleProps) {
         <tbody>
           {
             schedule.map((_schedule: ScheduleType, index: number) => (
-              <tr key={`${moment()}-${key}-${index}`}>
+              <tr key={`${moment()}-${id}-${index}`}>
                 <td className="border px-4 py-2">{moment().day(_schedule.day).format('dddd')}</td>
                 <td className="border px-4 py-2">{moment(_schedule.start, "HH:mm:ss").format("h:mm:ss A")}</td>
                 <td className="border px-4 py-2">{moment(_schedule.end, "HH:mm:ss").format("h:mm:ss A")}</td>

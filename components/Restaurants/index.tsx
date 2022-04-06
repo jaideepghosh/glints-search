@@ -9,21 +9,40 @@ export default function Restaurants() {
   const [restaurants, setRestaurants] = useState<RestaurantResponseType[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoader] = useState(false);
+  const [searchKey, setSearchKey] = useState('');
   const limit = 10;
 
   const loadNextpage = () => {
     setLoader(true);
     const newPage = page+1;
-    fetchRestaurants((newPage*limit)-limit+1,newPage*limit);
+    fetchRestaurants(searchKey, (newPage*limit)-limit+1, newPage*limit);
     setPage(newPage);
+  }
+
+  const search = async (search_key: string) => {
+    setRestaurants([]);
+    setPage(1);
+    setSearchKey(search_key);
+    fetchRestaurants(search_key);
   }
 
   useEffect(() => {
     fetchRestaurants();
   }, []);
 
-  const fetchRestaurants = (start = 0, end = limit) => {
-    fetch(`api/restaurants?start=${start}&end=${end}`).then((response) => response.json())
+  const fetchRestaurants = (_searchKey: string = searchKey, start = 0, end = limit) => {
+    const apiHeaders = new Headers();
+    apiHeaders.append('pragma', 'no-cache');
+    apiHeaders.append('cache-control', 'no-cache');
+    const apiInit = {
+      method: 'GET',
+      headers: apiHeaders,
+    };
+
+    const apiRequest = new Request(`api/restaurants?start=${start}&end=${end}${_searchKey!=''?'&search_key='+_searchKey:''}`);
+    
+    fetch(apiRequest, apiInit)
+    .then((response) => response.json())
     .then(__restaurants=>{
       setRestaurants(_restaurants => [..._restaurants, ...__restaurants])
       setLoader(false);
@@ -37,7 +56,7 @@ export default function Restaurants() {
   return (
     <div className="min-h-full flex items-center justify-center py-12 px-8 sm:px-6 lg:px-8">          
       <div className="">
-          <SearchForm/>
+          <SearchForm search={search}/>
 
           <div className="bg-white rounded-lg shadow">
             {
@@ -46,7 +65,7 @@ export default function Restaurants() {
             {
               !!restaurants.length && restaurants.map((restaurant)=>(
                 <Accordion title={restaurant.name} key={restaurant.id}>
-                  <Schedule schedule={restaurant.schedule} key={restaurant.id}/>
+                  <Schedule schedule={restaurant.schedule} id={restaurant.id}/>
                 </Accordion>
               ))
             }

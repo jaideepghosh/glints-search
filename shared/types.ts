@@ -5,7 +5,7 @@ export type ScheduleType = {
 }
 export type ScheduleProps = {
     schedule: Array<ScheduleType>,
-    key: number
+    id: number
 }
 export type RestaurantResponseType = {
     id: number,
