@@ -1,4 +1,21 @@
+import moment from "moment";
+
 export default function SearchForm() {
+    function generateHours () {
+        const items: any = [];
+        new Array(24).fill(0).forEach((acc, index) => {
+          items.push(moment( {hour: index} ).format('h:mm A'));
+          items.push(moment({ hour: index, minute: 30 }).format('h:mm A'));
+        })
+        return items;
+      }
+    const hours = generateHours();
+    const HourOptions = () => {
+            return hours.map((hour:string, index: number)=>(
+                <option value={hour} key={index}>{hour}</option>
+            ))
+    };
+
     return (
         <div className="flex flex-wrap -mx-2 space-y-4 md:space-y-0 mb-10">
             <div className="w-full px-2 md:w-1/3">
@@ -6,18 +23,14 @@ export default function SearchForm() {
             </div>
             <div className="w-full px-2 md:w-1/4">
                 <select name="open_hour" className="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline">
-                    <option value="" disabled selected>Opening Hour</option>
-                    <option value="">09:00 am</option>
-                    <option value="">09:00 am</option>
-                    <option value="">09:00 am</option>
+                    <option value="" disabled defaultValue="">Opening Hour</option>
+                    <HourOptions/>
                 </select>
             </div>
             <div className="w-full px-2 md:w-1/4">
                 <select name="close_hour" className="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline">
-                    <option value="" disabled selected>Closing Hour</option>
-                    <option value="">09:00 am</option>
-                    <option value="">09:00 am</option>
-                    <option value="">09:00 am</option>
+                    <option value="" disabled defaultValue="">Closing Hour</option>
+                    <HourOptions/>
                 </select>
             </div>
             <div className="w-full px-2 md:w-1/6 text-center">
