@@ -19,8 +19,6 @@ export default async function handler(
         //Handle search query
         const search_key = (req.query && req.query.search_key)? req.query.search_key: null;
 
-        let result;
-        let response_error;
         const select_values = `
             id,
             name,
@@ -30,27 +28,23 @@ export default async function handler(
                 end
             )
         `;
-        if(search_key){
-            const { data, error } = await supabase
-                .from(APP_CONSTANTS.restaurants)
-                .select(select_values)
-                .textSearch('name', search_key)
-                .range(start_limit,end_limit);
-            if(error)
-                response_error = error;
-            result = data;
-        } else {
-            const { data, error } = await supabase
-                .from(APP_CONSTANTS.restaurants)
-                .select(select_values)
-                .range(start_limit,end_limit);
-            if(error)
-                response_error = error;
-            result = data;
+
+        let query = supabase
+            .from(APP_CONSTANTS.restaurants)
+            .select(select_values);
+
+        if (search_key) {
+            query = query.textSearch('name', search_key);
         }
-        if(response_error)
-            return res.status(500).json(response_error);
-        return res.status(200).json(result);
+
+        // Set range at the end.
+        query = query.range(start_limit,end_limit);
+
+        const { data, error } = await query;
+
+        if(error)
+            return res.status(500).json(error);
+        return res.status(200).json(data);
     } catch (error) {
         return res.status(500).json({ message: 'Something went wrong.' })
     }
