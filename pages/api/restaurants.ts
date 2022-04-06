@@ -18,6 +18,8 @@ export default async function handler(
 
         //Handle search query
         const search_key = (req.query && req.query.search_key)? req.query.search_key: null;
+        const open_hour = (req.query && req.query.open_hour)? req.query.open_hour: null;
+        const close_hour = (req.query && req.query.close_hour)? req.query.close_hour: null;
 
         const select_values = `
             id,
@@ -33,6 +35,15 @@ export default async function handler(
             .from(APP_CONSTANTS.restaurants)
             .select(select_values);
 
+        if (open_hour) {
+            query = query.filter('schedule.start', 'gte', open_hour);
+        }
+        if (close_hour) {
+            query = query.filter('schedule.start', 'lte', close_hour);
+        }
+        // TODO:: Make sure to exclude the records which have 0 schedule.
+        // query = query.not("schedule", "eq", "NULL");
+
         if (search_key) {
             query = query.textSearch('name', search_key);
         }
@@ -40,10 +51,13 @@ export default async function handler(
         // Set range at the end.
         query = query.range(start_limit,end_limit);
 
-        const { data, error } = await query;
+        let { data, error } = await query;
 
         if(error)
             return res.status(500).json(error);
+        // temporarily fix the unnecessary records.
+        data = data.filter((_:any) => _.schedule && _.schedule.length);
+
         return res.status(200).json(data);
     } catch (error) {
         return res.status(500).json({ message: 'Something went wrong.' })
