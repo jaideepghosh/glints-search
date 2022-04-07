@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
+import { useUser } from '@clerk/clerk-react';
 import { RestaurantResponseType } from "../../shared/types";
 import Accordion from "../Accordion";
 import AccordionLoader from "../AccordionLoader";
 import Schedule from "./Schedule";
 import SearchForm from "./SearchForm";
+import fetchFavouriteRestaurants from "../../shared/restaurants";
 
 export default function Restaurants() {
+  const { user } = useUser();
   const [restaurants, setRestaurants] = useState<RestaurantResponseType[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoader] = useState(false);
   const [searchQuery, setSearchKey] = useState('');
   const limit = 10;
+  const [favourites, setFavourites]  = useState<number[]>([]);
 
   const loadNextpage = () => {
     setLoader(true);
@@ -24,6 +28,46 @@ export default function Restaurants() {
     setPage(1);
     setSearchKey(_searchQuery);
     fetchRestaurants(_searchQuery);
+  }
+
+  const fetchFavourites = () => {
+    fetchFavouriteRestaurants(user).then(result => {
+      const favouriteRestaurantIds = result.map((favouriteRestaurant:any)=>favouriteRestaurant.id)
+      setFavourites(favouriteRestaurantIds);
+    });
+  }
+
+  useEffect(() => {
+    if(user?.id) {
+      fetchFavourites();
+    } else {
+      setFavourites([]);
+    }
+  }, [user]);
+
+  type FAVOURITE_TOGGLE_TYPE = {
+    restaurantId: number;
+  }
+
+  const FAVOURITE_TOGGLE = ({restaurantId} : FAVOURITE_TOGGLE_TYPE) => {
+    const MARK_BUTTON = (
+      <button className="bg-transparent border border-blue-600 font-bold py-2 px-4 rounded inline-flex items-center justify-center m-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+          </svg>
+          <span>Mark as favourite</span>
+      </button>
+    );
+    const MARKED_BUTTON = (
+      <button className="bg-transparent border border-blue-600 font-bold py-2 px-4 rounded inline-flex items-center justify-center m-4" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+        </svg>
+        <span>Marked as favourite</span>
+    </button>
+    );
+    
+    return (favourites.includes(restaurantId))?MARKED_BUTTON:MARK_BUTTON;
   }
 
   useEffect(() => {
@@ -65,6 +109,9 @@ export default function Restaurants() {
               !!restaurants.length && restaurants.map((restaurant)=>(
                 <Accordion title={restaurant.name} key={restaurant.id}>
                   <Schedule schedule={restaurant.schedule} id={restaurant.id}/>
+                  <div className="text-center">
+                    <FAVOURITE_TOGGLE restaurantId={restaurant.id}/>
+                  </div>
                 </Accordion>
               ))
             }
