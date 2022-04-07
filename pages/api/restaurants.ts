@@ -36,10 +36,10 @@ export default async function handler(
             .select(select_values);
 
         if (open_hour) {
-            query = query.filter('schedule.start', 'gte', open_hour);
+            query = query.gte('schedule.start', open_hour);
         }
         if (close_hour) {
-            query = query.filter('schedule.start', 'lte', close_hour);
+            query = query.lte('schedule.end', close_hour);
         }
         // TODO:: Make sure to exclude the records which have 0 schedule.
         // query = query.not("schedule", "eq", "NULL");
