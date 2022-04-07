@@ -4,6 +4,7 @@ import { RestaurantResponseType } from "../../shared/types";
 import Accordion from "../Accordion";
 import AccordionLoader from "../AccordionLoader";
 import Schedule from "./Schedule";
+import fetchFavouriteRestaurants from "../../shared/restaurants";
 
 export default function Favourites() {
     const { user } = useUser();
@@ -28,32 +29,14 @@ export default function Favourites() {
     }
 
     const fetchRestaurants = (start = 0, end = limit) => {
-        const apiHeaders = new Headers();
-        apiHeaders.append('pragma', 'no-cache');
-        apiHeaders.append('cache-control', 'no-cache');
-        const apiInit = {
-        method: 'GET',
-        headers: apiHeaders,
-        };
-
-        const apiAddress = `api/favourites?start=${start}&end=${end}&user_id=${user?.id}`;
-        const apiRequest = new Request(apiAddress);
-        
-        fetch(apiRequest, apiInit)
-        .then((response) => response.json())
-        .then(_favouritesRestaurants=>{
-            console.log('_favouritesRestaurants:: ', _favouritesRestaurants);
-            // combine all restaurant keys
-            const structuredFavouritesRestaurants = _favouritesRestaurants.map((_favouritesRestaurant: any)=>{
-                return _favouritesRestaurant.restaurant
-            })
-            setRestaurants(_restaurants => [..._restaurants, ...structuredFavouritesRestaurants])
-            setLoader(false);
-        }).catch((error) => {
-            console.log(error);
-            setLoader(false);
-            throw new Error('Something went wrong.');
-        });
+      fetchFavouriteRestaurants(user, start, end).then(result => {
+        setRestaurants(_restaurants => [..._restaurants, ...result])
+        setLoader(false);
+      }).catch(error=>{
+        console.log(error);
+        setLoader(false);
+        throw new Error('Something went wrong.');
+      });
     }
 
     return (
