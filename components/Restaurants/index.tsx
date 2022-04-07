@@ -58,8 +58,6 @@ export default function Restaurants() {
     <div className="min-h-full flex items-center justify-center py-12 px-8 sm:px-6 lg:px-8">          
       <div className="">
           <SearchForm search={search}/>
-
-          <div className="bg-white rounded-lg shadow">
             {
               !restaurants.length? <AccordionLoader/>: <></>
             }
@@ -100,7 +98,6 @@ export default function Restaurants() {
                 </div>
               )
             }
-          </div>
       </div>
     </div>      
   );
