@@ -12,3 +12,6 @@ export type RestaurantResponseType = {
     name: string,
     schedule: Array<ScheduleType>
 }
+export type ResponseData = {
+    message: string
+}  
