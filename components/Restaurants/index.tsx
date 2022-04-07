@@ -49,9 +49,40 @@ export default function Restaurants() {
     restaurantId: number;
   }
 
+  const markFavourite = async (restaurantId: number) => {
+    const apiHeaders = new Headers();
+    apiHeaders.append('pragma', 'no-cache');
+    apiHeaders.append('cache-control', 'no-cache');
+    apiHeaders.append('accept', 'application/json');
+    apiHeaders.append('content-type', 'application/json');
+    const apiInit = {
+      method: 'POST',
+      headers: apiHeaders,
+      body: JSON.stringify({
+        restaurant_id: restaurantId
+      })
+    };
+    const apiAddress = `api/favourites?user_id=${user?.id}`;
+    const apiRequest = new Request(apiAddress);
+
+    try {
+      const response = await fetch(apiRequest, apiInit);
+      fetchFavourites();
+      console.log('response:: ', response);
+      alert('Added to your favourites.');
+    } catch (error) {
+      console.log('error:: ', error);
+    }
+  }
+ 
   const FAVOURITE_TOGGLE = ({restaurantId} : FAVOURITE_TOGGLE_TYPE) => {
     const MARK_BUTTON = (
-      <button className="bg-transparent border border-blue-600 font-bold py-2 px-4 rounded inline-flex items-center justify-center m-4">
+      <button
+      className="bg-transparent border border-blue-600 font-bold py-2 px-4 rounded inline-flex items-center justify-center m-4"
+      onClick={_=>{
+        markFavourite(restaurantId);
+      }}
+      >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
           </svg>
@@ -66,7 +97,6 @@ export default function Restaurants() {
         <span>Marked as favourite</span>
     </button>
     );
-    
     return (favourites.includes(restaurantId))?MARKED_BUTTON:MARK_BUTTON;
   }
 
