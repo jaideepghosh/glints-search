@@ -9,28 +9,28 @@ export default function Restaurants() {
   const [restaurants, setRestaurants] = useState<RestaurantResponseType[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoader] = useState(false);
-  const [searchKey, setSearchKey] = useState('');
+  const [searchQuery, setSearchKey] = useState('');
   const limit = 10;
 
   const loadNextpage = () => {
     setLoader(true);
     const newPage = page+1;
-    fetchRestaurants(searchKey, (newPage*limit)-limit+1, newPage*limit);
+    fetchRestaurants(searchQuery, (newPage*limit)-limit+1, newPage*limit);
     setPage(newPage);
   }
 
-  const search = async (search_key: string) => {
+  const search = async (_searchQuery: string) => {
     setRestaurants([]);
     setPage(1);
-    setSearchKey(search_key);
-    fetchRestaurants(search_key);
+    setSearchKey(_searchQuery);
+    fetchRestaurants(_searchQuery);
   }
 
   useEffect(() => {
     fetchRestaurants();
   }, []);
 
-  const fetchRestaurants = (_searchKey: string = searchKey, start = 0, end = limit) => {
+  const fetchRestaurants = (_searchQuery: string = searchQuery, start = 0, end = limit) => {
     const apiHeaders = new Headers();
     apiHeaders.append('pragma', 'no-cache');
     apiHeaders.append('cache-control', 'no-cache');
@@ -39,7 +39,8 @@ export default function Restaurants() {
       headers: apiHeaders,
     };
 
-    const apiRequest = new Request(`api/restaurants?start=${start}&end=${end}${_searchKey!=''?'&search_key='+_searchKey:''}`);
+    const apiAddress = `api/restaurants?start=${start}&end=${end}${_searchQuery!=''?_searchQuery:''}`;
+    const apiRequest = new Request(apiAddress);
     
     fetch(apiRequest, apiInit)
     .then((response) => response.json())
